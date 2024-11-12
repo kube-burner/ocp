@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/kube-burner/kube-burner/pkg/config"
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	"github.com/praserx/ipconv"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -145,7 +144,7 @@ func generateEgressIPs(numJobIterations int, addressesPerIteration int, external
 }
 
 // NewClusterDensity holds cluster-density workload
-func NewEgressIP(wh *workloads.WorkloadHelper, variant string) *cobra.Command {
+func NewEgressIP(variant string) *cobra.Command {
 	var iterations, addressesPerIteration int
 	var externalServerIP string
 	var podReadyThreshold time.Duration

@@ -19,12 +19,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	"github.com/spf13/cobra"
 )
 
 // NewClusterDensity holds cluster-density workload
-func NewWebBurner(wh *workloads.WorkloadHelper, variant string) *cobra.Command {
+func NewWebBurner(variant string) *cobra.Command {
 	var limitcount, scale int
 	var bfd, crd, icni, probe, sriov bool
 	var bridge string

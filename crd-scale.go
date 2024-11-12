@@ -18,12 +18,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	"github.com/spf13/cobra"
 )
 
 // NewCrdScale holds the crd-scale workload
-func NewCrdScale(wh *workloads.WorkloadHelper) *cobra.Command {
+func NewCrdScale() *cobra.Command {
 	var iterations int
 	var metricsProfiles []string
 	cmd := &cobra.Command{

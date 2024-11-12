@@ -20,7 +20,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -36,14 +35,12 @@ var dynamicStorageProvisioners = map[string]string{
 }
 
 // NewPVCDensity holds pvc-density workload
-func NewPVCDensity(wh *workloads.WorkloadHelper) *cobra.Command {
-
+func NewPVCDensity() *cobra.Command {
 	var iterations int
 	var storageProvisioners, metricsProfiles []string
 	var claimSize string
 	var containerImage string
 	provisioner := "aws"
-
 	cmd := &cobra.Command{
 		Use:          "pvc-density",
 		Short:        "Runs pvc-density workload",
