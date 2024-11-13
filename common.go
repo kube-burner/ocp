@@ -60,12 +60,10 @@ func GatherMetadata(wh *workloads.WorkloadHelper, alerting bool) error {
 	return nil
 }
 
-func NewWorkload(cmd *cobra.Command, wh workloads.WorkloadHelper) *cobra.Command {
-	cmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
+func NewWorkload(cmd *cobra.Command, wh *workloads.WorkloadHelper) *cobra.Command {
+	cmd.Run = func(cmd *cobra.Command, args []string) {
 		metricsProfiles, _ := cmd.Flags().GetStringSlice("metrics-profile")
 		os.Setenv("METRICS", strings.Join(metricsProfiles, ","))
-	}
-	cmd.Run = func(cmd *cobra.Command, args []string) {
 		rc := wh.Run(cmd.Name())
 		os.Exit(rc)
 	}
