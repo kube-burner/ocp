@@ -50,8 +50,8 @@ teardown_file() {
 }
 
 @test "cluster-density-v2: user-metadata=true; es-indexing=true; churning=true; svcLatency=true" {
-  run_cmd kube-burner-ocp cluster-density-v2 --iterations=2 --churn-duration=1m --churn-delay=5s ${COMMON_FLAGS} --user-metadata=user-metadata.yml --service-latency --uuid=${UUID}
-  check_metric_value cpu-kubelet jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement svcLatencyMeasurement svcLatencyQuantilesMeasurement etcdVersion 
+  run_cmd kube-burner-ocp cluster-density-v2 --iterations=2 --churn-duration=1m --churn-delay=5s ${COMMON_FLAGS} --user-metadata=user-metadata.yml --service-latency --uuid=${UUID} --metrics-profile=metrics-report.yml
+  check_metric_value cpu-kubelet jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement svcLatencyMeasurement svcLatencyQuantilesMeasurement
 }
 
 @test "cluster-density-v2: churn-deletion-strategy=gvr; custom-metrics=true" {
