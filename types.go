@@ -14,11 +14,6 @@
 
 package ocp
 
-type ProfileType string
-
 const (
-	Regular    ProfileType = "regular"
-	Reporting  ProfileType = "reporting"
-	Both       ProfileType = "both"
-	TenMinutes int64       = 600
+	TenMinutes int64 = 600
 )

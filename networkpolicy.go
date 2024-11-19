@@ -19,18 +19,16 @@ import (
 	"os"
 	"time"
 
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	"github.com/spf13/cobra"
 )
 
 // NewNetworkPolicy holds network-policy workload
-func NewNetworkPolicy(wh *workloads.WorkloadHelper, variant string) *cobra.Command {
+func NewNetworkPolicy(variant string) *cobra.Command {
 	var iterations, churnPercent, churnCycles int
 	var churn bool
 	var churnDelay, churnDuration time.Duration
 	var churnDeletionStrategy string
 	var metricsProfiles []string
-	var rc int
 	cmd := &cobra.Command{
 		Use:   variant,
 		Short: fmt.Sprintf("Runs %v workload", variant),
@@ -42,13 +40,6 @@ func NewNetworkPolicy(wh *workloads.WorkloadHelper, variant string) *cobra.Comma
 			os.Setenv("CHURN_DELAY", fmt.Sprintf("%v", churnDelay))
 			os.Setenv("CHURN_PERCENT", fmt.Sprint(churnPercent))
 			os.Setenv("CHURN_DELETION_STRATEGY", churnDeletionStrategy)
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 	cmd.Flags().IntVar(&iterations, "iterations", 0, fmt.Sprintf("%v iterations", variant))

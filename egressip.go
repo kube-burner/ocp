@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/kube-burner/kube-burner/pkg/config"
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	"github.com/praserx/ipconv"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -145,12 +144,11 @@ func generateEgressIPs(numJobIterations int, addressesPerIteration int, external
 }
 
 // NewClusterDensity holds cluster-density workload
-func NewEgressIP(wh *workloads.WorkloadHelper, variant string) *cobra.Command {
+func NewEgressIP(variant string) *cobra.Command {
 	var iterations, addressesPerIteration int
 	var externalServerIP string
 	var podReadyThreshold time.Duration
 	var metricsProfiles []string
-	var rc int
 	cmd := &cobra.Command{
 		Use:   variant,
 		Short: fmt.Sprintf("Runs %v workload", variant),
@@ -160,13 +158,6 @@ func NewEgressIP(wh *workloads.WorkloadHelper, variant string) *cobra.Command {
 			os.Setenv("ADDRESSES_PER_ITERATION", fmt.Sprint(addressesPerIteration))
 			os.Setenv("EXTERNAL_SERVER_IP", externalServerIP)
 			generateEgressIPs(iterations, addressesPerIteration, externalServerIP)
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 	cmd.Flags().DurationVar(&podReadyThreshold, "pod-ready-threshold", 2*time.Minute, "Pod ready timeout threshold")

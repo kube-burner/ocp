@@ -34,7 +34,6 @@ func NewClusterDensity(wh *workloads.WorkloadHelper, variant string) *cobra.Comm
 	var churnDeletionStrategy string
 	var podReadyThreshold time.Duration
 	var metricsProfiles []string
-	var rc int
 	cmd := &cobra.Command{
 		Use:   variant,
 		Short: fmt.Sprintf("Runs %v workload", variant),
@@ -53,8 +52,6 @@ func NewClusterDensity(wh *workloads.WorkloadHelper, variant string) *cobra.Comm
 				log.Fatal("Error obtaining default ingress domain: ", err.Error())
 			}
 			os.Setenv("INGRESS_DOMAIN", ingressDomain)
-		},
-		Run: func(cmd *cobra.Command, args []string) {
 			if cmd.Name() == "cluster-density-v2" {
 				kubeClientProvider := config.NewKubeClientProvider("", "")
 				clientset, _ := kubeClientProvider.ClientSet(0, 0)
@@ -62,11 +59,6 @@ func NewClusterDensity(wh *workloads.WorkloadHelper, variant string) *cobra.Comm
 					log.Errorf("image-registry deployment is not deployed")
 				}
 			}
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 	cmd.Flags().DurationVar(&podReadyThreshold, "pod-ready-threshold", 2*time.Minute, "Pod ready timeout threshold")

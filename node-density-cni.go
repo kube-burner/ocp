@@ -33,7 +33,6 @@ func NewNodeDensityCNI(wh *workloads.WorkloadHelper) *cobra.Command {
 	var podReadyThreshold time.Duration
 	var iterationsPerNamespace int
 	var metricsProfiles []string
-	var rc int
 	cmd := &cobra.Command{
 		Use:          "node-density-cni",
 		Short:        "Runs node-density-cni workload",
@@ -49,13 +48,6 @@ func NewNodeDensityCNI(wh *workloads.WorkloadHelper) *cobra.Command {
 			os.Setenv("ITERATIONS_PER_NAMESPACE", fmt.Sprint(iterationsPerNamespace))
 			os.Setenv("POD_READY_THRESHOLD", fmt.Sprintf("%v", podReadyThreshold))
 			os.Setenv("SVC_LATENCY", strconv.FormatBool(svcLatency))
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 	cmd.Flags().DurationVar(&podReadyThreshold, "pod-ready-threshold", 1*time.Minute, "Pod ready timeout threshold")

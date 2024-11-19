@@ -37,7 +37,6 @@ const configDir = "config"
 func openShiftCmd() *cobra.Command {
 	var workloadConfig workloads.Config
 	var wh workloads.WorkloadHelper
-	var metricsProfileType string
 	var esServer, esIndex string
 	var QPS, burst int
 	var gc, gcMetrics, alerting, checkHealth, localIndexing, extract bool
@@ -59,7 +58,6 @@ func openShiftCmd() *cobra.Command {
 	ocpCmd.PersistentFlags().BoolVar(&gcMetrics, "gc-metrics", false, "Collect metrics during garbage collection")
 	ocpCmd.PersistentFlags().StringVar(&workloadConfig.UserMetadata, "user-metadata", "", "User provided metadata file, in YAML format")
 	ocpCmd.PersistentFlags().BoolVar(&extract, "extract", false, "Extract workload in the current directory")
-	ocpCmd.PersistentFlags().StringVar(&metricsProfileType, "profile-type", "both", "Metrics profile to use, supported options are: regular, reporting or both")
 	ocpCmd.MarkFlagsRequiredTogether("es-server", "es-index")
 	ocpCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
 		if cmd.Name() == "version" {
@@ -106,26 +104,26 @@ func openShiftCmd() *cobra.Command {
 		}
 	}
 	ocpCmd.AddCommand(
-		ocp.NewClusterDensity(&wh, "cluster-density-v2"),
-		ocp.NewClusterDensity(&wh, "cluster-density-ms"),
-		ocp.NewCrdScale(&wh),
-		ocp.NewNetworkPolicy(&wh, "networkpolicy-multitenant"),
-		ocp.NewNetworkPolicy(&wh, "networkpolicy-matchlabels"),
-		ocp.NewNetworkPolicy(&wh, "networkpolicy-matchexpressions"),
-		ocp.NewNodeDensity(&wh),
-		ocp.NewNodeDensityHeavy(&wh),
-		ocp.NewNodeDensityCNI(&wh),
-		ocp.NewUDNDensityPods(&wh),
-		ocp.NewIndex(&wh.MetricsEndpoint, &wh.MetadataAgent),
-		ocp.NewWorkersScale(&wh.MetricsEndpoint, &wh.MetadataAgent),
-		ocp.NewPVCDensity(&wh),
-		ocp.NewRDSCore(&wh),
-		ocp.NewWebBurner(&wh, "web-burner-init"),
-		ocp.NewWebBurner(&wh, "web-burner-node-density"),
-		ocp.NewWebBurner(&wh, "web-burner-cluster-density"),
-		ocp.NewEgressIP(&wh, "egressip"),
-		ocp.ClusterHealth(),
+		ocp.NewWorkload(ocp.NewClusterDensity(&wh, "cluster-density-v2"), &wh),
+		ocp.NewWorkload(ocp.NewClusterDensity(&wh, "cluster-density-ms"), &wh),
+		ocp.NewWorkload(ocp.NewCrdScale(), &wh),
+		ocp.NewWorkload(ocp.NewNetworkPolicy("networkpolicy-multitenant"), &wh),
+		ocp.NewWorkload(ocp.NewNetworkPolicy("networkpolicy-matchlabels"), &wh),
+		ocp.NewWorkload(ocp.NewNetworkPolicy("networkpolicy-matchexpressions"), &wh),
+		ocp.NewWorkload(ocp.NewNodeDensity(&wh), &wh),
+		ocp.NewWorkload(ocp.NewNodeDensityHeavy(&wh), &wh),
+		ocp.NewWorkload(ocp.NewNodeDensityCNI(&wh), &wh),
+		ocp.NewWorkload(ocp.NewPVCDensity(), &wh),
+		ocp.NewWorkload(ocp.NewRDSCore(&wh), &wh),
+		ocp.NewWorkload(ocp.NewWebBurner("web-burner-init"), &wh),
+		ocp.NewWorkload(ocp.NewWebBurner("web-burner-node-density"), &wh),
+		ocp.NewWorkload(ocp.NewWebBurner("web-burner-cluster-density"), &wh),
+		ocp.NewWorkload(ocp.NewEgressIP("egressip"), &wh),
+		ocp.NewWorkload(ocp.NewUDNDensityPods(&wh), &wh),
 		ocp.CustomWorkload(&wh),
+		ocp.NewWorkersScale(&wh.MetricsEndpoint, &wh.MetadataAgent),
+		ocp.NewIndex(&wh.MetricsEndpoint, &wh.MetadataAgent),
+		ocp.ClusterHealth(),
 	)
 	util.SetupCmd(ocpCmd)
 	return ocpCmd

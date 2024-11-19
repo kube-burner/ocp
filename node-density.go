@@ -31,7 +31,6 @@ func NewNodeDensity(wh *workloads.WorkloadHelper) *cobra.Command {
 	var podReadyThreshold time.Duration
 	var containerImage string
 	var metricsProfiles []string
-	var rc int
 	cmd := &cobra.Command{
 		Use:          "node-density",
 		Short:        "Runs node-density workload",
@@ -45,13 +44,6 @@ func NewNodeDensity(wh *workloads.WorkloadHelper) *cobra.Command {
 			os.Setenv("JOB_ITERATIONS", fmt.Sprint(totalPods-podCount))
 			os.Setenv("POD_READY_THRESHOLD", fmt.Sprintf("%v", podReadyThreshold))
 			os.Setenv("CONTAINER_IMAGE", containerImage)
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 	cmd.Flags().IntVar(&podsPerNode, "pods-per-node", 245, "Pods per node")

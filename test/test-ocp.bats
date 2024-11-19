@@ -35,9 +35,9 @@ teardown_file() {
   check_metric_value jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement
 }
 
-@test "node-density: es-indexing=true" {
-  run_cmd kube-burner-ocp node-density --pods-per-node=75 --pod-ready-threshold=10s --uuid=${UUID} ${COMMON_FLAGS}
-  check_metric_value etcdVersion jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement
+@test "node-density: es-indexing=true; metrics-profile=metrics.yml,metrics-report.yml" {
+  run_cmd kube-burner-ocp node-density --pods-per-node=75 --pod-ready-threshold=10s --uuid=${UUID} --metrics-profile=metrics.yml,metrics-report.yml ${COMMON_FLAGS}
+  check_metric_value etcdVersion jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement max-memory-kubelet
 }
 
 @test "node-density-heavy: gc-metrics=true; local-indexing=true" {
@@ -50,9 +50,9 @@ teardown_file() {
   check_metric_value jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement
 }
 
-@test "cluster-density-v2: profile-type=both; user-metadata=true; es-indexing=true; churning=true; svcLatency=true" {
-  run_cmd kube-burner-ocp cluster-density-v2 --iterations=2 --churn-duration=1m --churn-delay=5s --profile-type=both ${COMMON_FLAGS} --user-metadata=user-metadata.yml --service-latency --uuid=${UUID}
-  check_metric_value cpu-kubelet jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement svcLatencyMeasurement svcLatencyQuantilesMeasurement etcdVersion 
+@test "cluster-density-v2: user-metadata=true; es-indexing=true; churning=true; svcLatency=true" {
+  run_cmd kube-burner-ocp cluster-density-v2 --iterations=2 --churn-duration=1m --churn-delay=5s ${COMMON_FLAGS} --user-metadata=user-metadata.yml --service-latency --uuid=${UUID} --metrics-profile=metrics-report.yml
+  check_metric_value cpu-kubelet jobSummary podLatencyMeasurement podLatencyQuantilesMeasurement svcLatencyMeasurement svcLatencyQuantilesMeasurement
 }
 
 @test "cluster-density-v2: churn-deletion-strategy=gvr; custom-metrics=true" {

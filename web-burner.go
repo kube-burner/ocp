@@ -19,18 +19,16 @@ import (
 	"os"
 	"time"
 
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	"github.com/spf13/cobra"
 )
 
 // NewClusterDensity holds cluster-density workload
-func NewWebBurner(wh *workloads.WorkloadHelper, variant string) *cobra.Command {
+func NewWebBurner(variant string) *cobra.Command {
 	var limitcount, scale int
 	var bfd, crd, icni, probe, sriov bool
 	var bridge string
 	var podReadyThreshold time.Duration
 	var metricsProfiles []string
-	var rc int
 	cmd := &cobra.Command{
 		Use:   variant,
 		Short: fmt.Sprintf("Runs %v workload", variant),
@@ -44,13 +42,6 @@ func NewWebBurner(wh *workloads.WorkloadHelper, variant string) *cobra.Command {
 			os.Setenv("PROBE", fmt.Sprint(probe))
 			os.Setenv("SCALE", fmt.Sprint(scale))
 			os.Setenv("SRIOV", fmt.Sprint(sriov))
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 	cmd.Flags().DurationVar(&podReadyThreshold, "pod-ready-threshold", 2*time.Minute, "Pod ready timeout threshold")

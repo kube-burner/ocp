@@ -33,7 +33,6 @@ func NewRDSCore(wh *workloads.WorkloadHelper) *cobra.Command {
 	var churnDelay, churnDuration, podReadyThreshold time.Duration
 	var churnDeletionStrategy, perfProfile string
 	var metricsProfiles []string
-	var rc int
 	cmd := &cobra.Command{
 		Use:          "rds-core",
 		Short:        "Runs rds-core workload",
@@ -55,13 +54,6 @@ func NewRDSCore(wh *workloads.WorkloadHelper) *cobra.Command {
 				log.Fatal("Error obtaining default ingress domain: ", err.Error())
 			}
 			os.Setenv("INGRESS_DOMAIN", ingressDomain)
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 	cmd.Flags().BoolVar(&churn, "churn", true, "Enable churning")

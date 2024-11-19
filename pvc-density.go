@@ -20,7 +20,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kube-burner/kube-burner/pkg/workloads"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -36,15 +35,12 @@ var dynamicStorageProvisioners = map[string]string{
 }
 
 // NewPVCDensity holds pvc-density workload
-func NewPVCDensity(wh *workloads.WorkloadHelper) *cobra.Command {
-
+func NewPVCDensity() *cobra.Command {
 	var iterations int
 	var storageProvisioners, metricsProfiles []string
 	var claimSize string
 	var containerImage string
-	var rc int
 	provisioner := "aws"
-
 	cmd := &cobra.Command{
 		Use:          "pvc-density",
 		Short:        "Runs pvc-density workload",
@@ -61,15 +57,7 @@ func NewPVCDensity(wh *workloads.WorkloadHelper) *cobra.Command {
 			if !re.MatchString(provisioner) {
 				log.Fatal(fmt.Errorf("%s does not match one of %s", provisioner, storageProvisioners))
 			}
-
 			os.Setenv("STORAGE_PROVISIONER", fmt.Sprint(dynamicStorageProvisioners[provisioner]))
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			setMetrics(cmd, metricsProfiles)
-			rc = wh.Run(cmd.Name())
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			os.Exit(rc)
 		},
 	}
 
